@@ -9,6 +9,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UAbilitySystemComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -27,6 +28,9 @@ class AActionGamePrototypeCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
+	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -46,7 +50,7 @@ class AActionGamePrototypeCharacter : public ACharacter
 
 public:
 	AActionGamePrototypeCharacter();
-	
+	void PossessedBy(AController* NewController) override;
 
 protected:
 

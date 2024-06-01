@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ActionGamePrototypeCharacter.h"
+#include "AbilitySystemComponent.h"
+#include "ActionGamePlayerState.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -52,6 +54,18 @@ AActionGamePrototypeCharacter::AActionGamePrototypeCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+}
+
+void AActionGamePrototypeCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	AActionGamePlayerState* playerState = GetPlayerState<AActionGamePlayerState>();
+	if (playerState != nullptr)
+	{
+		AbilitySystemComponent = Cast<UAbilitySystemComponent>(playerState->GetAbilitySystemComponent());
+		AbilitySystemComponent->InitAbilityActorInfo(playerState, this);
+	}
 }
 
 void AActionGamePrototypeCharacter::BeginPlay()

@@ -2,9 +2,9 @@
 
 #include "ActionGamePrototypeCharacter.h"
 #include "AbilitySystemComponent.h"
-#include "ActionGamePlayerState.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
+#include "AttributeSets/CharacterAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -52,20 +52,15 @@ AActionGamePrototypeCharacter::AActionGamePrototypeCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Create Ability System Component and set replication
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+
+	// Create the Character attribute set
+	CharacterAttributeSet = CreateDefaultSubobject<UCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-}
-
-void AActionGamePrototypeCharacter::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
-
-	AActionGamePlayerState* playerState = GetPlayerState<AActionGamePlayerState>();
-	if (playerState != nullptr)
-	{
-		AbilitySystemComponent = Cast<UAbilitySystemComponent>(playerState->GetAbilitySystemComponent());
-		AbilitySystemComponent->InitAbilityActorInfo(playerState, this);
-	}
 }
 
 void AActionGamePrototypeCharacter::BeginPlay()
@@ -81,6 +76,12 @@ void AActionGamePrototypeCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	
+	// Listeners bindings
+	OnHealthAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnHealthChanged);
+	OnStaminaAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetStaminaAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnStaminaChanged);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,4 +142,14 @@ void AActionGamePrototypeCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AActionGamePrototypeCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
+{
+	const float NewHealth = Data.NewValue;
+}
+
+void AActionGamePrototypeCharacter::OnStaminaChanged(const FOnAttributeChangeData& Data)
+{
+	const float NewStamina = Data.NewValue;
 }

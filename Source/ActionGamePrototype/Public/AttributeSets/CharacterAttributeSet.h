@@ -30,4 +30,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Stamina")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Stamina)
+
+	void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 };

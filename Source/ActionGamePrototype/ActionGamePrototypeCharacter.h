@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameplayEffectTypes.h"
 #include "Logging/LogMacros.h"
 #include "ActionGamePrototypeCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UAbilitySystemComponent;
+class UCharacterAttributeSet;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -29,8 +31,13 @@ class AActionGamePrototypeCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
 
+	// GAS variables --------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
-	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	UAbilitySystemComponent* AbilitySystemComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
+	UCharacterAttributeSet* CharacterAttributeSet;
+	// ----------------------------------------
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -48,9 +55,11 @@ class AActionGamePrototypeCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	FDelegateHandle OnHealthAttributeChangeDelegateHandle;
+	FDelegateHandle OnStaminaAttributeChangeDelegateHandle;
+
 public:
 	AActionGamePrototypeCharacter();
-	void PossessedBy(AController* NewController) override;
 
 protected:
 
@@ -60,6 +69,10 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 			
+private:
+	/* Attributes update */
+	void OnHealthChanged(const FOnAttributeChangeData& Data);
+	void OnStaminaChanged(const FOnAttributeChangeData& Data);
 
 protected:
 	// APawn interface

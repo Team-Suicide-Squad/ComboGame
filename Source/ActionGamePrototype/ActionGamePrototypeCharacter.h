@@ -56,7 +56,7 @@ class AActionGamePrototypeCharacter : public ACharacter
 	UInputAction* LookAction;
 
 	FDelegateHandle OnHealthAttributeChangeDelegateHandle;
-	FDelegateHandle OnStaminaAttributeChangeDelegateHandle;
+	FDelegateHandle OnManaAttributeChangeDelegateHandle;
 
 public:
 	AActionGamePrototypeCharacter();
@@ -72,7 +72,7 @@ protected:
 private:
 	/* Attributes update */
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
-	void OnStaminaChanged(const FOnAttributeChangeData& Data);
+	void OnManaChanged(const FOnAttributeChangeData& Data);
 
 protected:
 	// APawn interface

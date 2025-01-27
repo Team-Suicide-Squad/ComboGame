@@ -81,7 +81,7 @@ void AActionGamePrototypeCharacter::BeginPlay()
 	
 	// Listeners bindings
 	OnHealthAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnHealthChanged);
-	OnStaminaAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetStaminaAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnStaminaChanged);
+	OnManaAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetManaAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnManaChanged);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ void AActionGamePrototypeCharacter::OnHealthChanged(const FOnAttributeChangeData
 	const float NewHealth = Data.NewValue;
 }
 
-void AActionGamePrototypeCharacter::OnStaminaChanged(const FOnAttributeChangeData& Data)
+void AActionGamePrototypeCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
 {
-	const float NewStamina = Data.NewValue;
+	const float NewMana = Data.NewValue;
 }

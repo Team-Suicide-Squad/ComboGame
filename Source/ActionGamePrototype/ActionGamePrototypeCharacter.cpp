@@ -101,6 +101,9 @@ void AActionGamePrototypeCharacter::SetupPlayerInputComponent(UInputComponent* P
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AActionGamePrototypeCharacter::Look);
+
+		// Attacking
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AActionGamePrototypeCharacter::Attack);
 	}
 	else
 	{
@@ -142,6 +145,11 @@ void AActionGamePrototypeCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AActionGamePrototypeCharacter::Attack(const FInputActionValue& Value)
+{
+	// To implement
 }
 
 void AActionGamePrototypeCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)

@@ -55,6 +55,10 @@ class AActionGamePrototypeCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Attack Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* AttackAction;
+
 	FDelegateHandle OnHealthAttributeChangeDelegateHandle;
 	FDelegateHandle OnManaAttributeChangeDelegateHandle;
 
@@ -68,6 +72,9 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	/** Called for attack input */
+	void Attack(const FInputActionValue& Value);
 			
 private:
 	/* Attributes update */

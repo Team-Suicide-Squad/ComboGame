@@ -23,24 +23,33 @@ class ACTIONGAMEPROTOTYPE_API UCharacterAttributeSet : public UAttributeSet
 	GENERATED_BODY()
 
 public:
-	UCharacterAttributeSet();
-
+#pragma region Health
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Health)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Max Health")
+	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxHealth)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	float DefaultHealth = 100.0f;
+#pragma endregion
+
+#pragma region Mana
 	UPROPERTY(BlueprintReadOnly, Category = "Mana")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Mana)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Max Mana")
+	UPROPERTY(BlueprintReadOnly, Category = "Mana")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxMana)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Mana")
+	float DefaultMana = 100.0f;
+#pragma endregion
+
+	void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
 	void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 	UFUNCTION(BlueprintCallable)

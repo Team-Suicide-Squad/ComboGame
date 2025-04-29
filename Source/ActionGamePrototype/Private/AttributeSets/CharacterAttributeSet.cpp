@@ -3,39 +3,49 @@
 
 #include "AttributeSets/CharacterAttributeSet.h"
 
-UCharacterAttributeSet::UCharacterAttributeSet()
+void UCharacterAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const
 {
-	Health.SetBaseValue(100.0f);
-	Health.SetCurrentValue(100.0f);
-	MaxHealth.SetBaseValue(100.0f);
-	MaxHealth.SetCurrentValue(100.0f);
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultHealth);
+	}
 
-	Mana.SetBaseValue(100.0f);
-	Mana.SetCurrentValue(100.0f);
-	MaxMana.SetBaseValue(100.0f);
-	MaxMana.SetCurrentValue(100.0f);
+	if (Attribute == GetMaxHealthAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultHealth);
+	}
+
+	if (Attribute == GetManaAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultMana);
+	}
+
+	if (Attribute == GetMaxManaAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultMana);
+	}
 }
 
 void UCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	if(Attribute == GetHealthAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, 100.0f);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MaxHealth.GetBaseValue());
 	}
 
 	if (Attribute == GetMaxHealthAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, 100.0f);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MaxHealth.GetBaseValue());
 	}
 
 	if(Attribute == GetManaAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, 100.0f);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MaxMana.GetBaseValue());
 	}
 
 	if (Attribute == GetMaxManaAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, 100.0f);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MaxMana.GetBaseValue());
 	}
 }
 

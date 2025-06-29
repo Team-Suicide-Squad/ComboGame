@@ -41,6 +41,8 @@ AActionGamePrototypeCharacter::AActionGamePrototypeCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
+	JumpMaxCount = 2;
+
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -82,6 +84,11 @@ void AActionGamePrototypeCharacter::BeginPlay()
 	// Listeners bindings
 	OnHealthAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnHealthChanged);
 	OnManaAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetManaAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnManaChanged);
+}
+
+bool AActionGamePrototypeCharacter::CanJumpInternal_Implementation() const
+{
+	return Super::CanJumpInternal_Implementation();
 }
 
 //////////////////////////////////////////////////////////////////////////

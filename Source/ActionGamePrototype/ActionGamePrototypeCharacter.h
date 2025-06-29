@@ -88,6 +88,8 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
+	bool CanJumpInternal_Implementation() const override;
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

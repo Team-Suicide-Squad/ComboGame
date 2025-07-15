@@ -12,6 +12,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "GA_Jump.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -80,6 +81,8 @@ void AActionGamePrototypeCharacter::BeginPlay()
 	}
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+	AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(UGA_Jump::StaticClass(), 1, 0));
 	
 	// Listeners bindings
 	OnHealthAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnHealthChanged);
@@ -100,7 +103,7 @@ void AActionGamePrototypeCharacter::SetupPlayerInputComponent(UInputComponent* P
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AActionGamePrototypeCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
@@ -138,6 +141,14 @@ void AActionGamePrototypeCharacter::Move(const FInputActionValue& Value)
 		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
+	}
+}
+
+void AActionGamePrototypeCharacter::Jump(const FInputActionValue& Value)
+{
+	if(AbilitySystemComponent != nullptr)
+	{
+		AbilitySystemComponent->TryActivateAbilityByClass(UGA_Jump::StaticClass());
 	}
 }
 

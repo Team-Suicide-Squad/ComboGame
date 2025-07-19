@@ -8,12 +8,11 @@ UGA_Jump::UGA_Jump(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::NonInstanced;
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
 void UGA_Jump::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-
 	if (HasAuthorityOrPredictionKey(ActorInfo, &ActivationInfo))
 	{
 		if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
@@ -23,6 +22,11 @@ void UGA_Jump::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 
 		ACharacter* Character = CastChecked<ACharacter>(ActorInfo->AvatarActor.Get());
 		Character->Jump();
+
+		if(UGameInstance* GameInstance = GetGameInstance())
+		{
+			GameInstance->GetTimerManager().SetTimer(JumpTimer, this, &UGA_Jump::ResetJump, TimeBetweenJumps, false);	
+		}
 	}
 }
 
@@ -63,5 +67,26 @@ void UGA_Jump::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 
 	ACharacter* Character = CastChecked<ACharacter>(ActorInfo->AvatarActor.Get());
 	Character->StopJumping();
+}
+
+void UGA_Jump::ResetJump()
+{
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+}
+
+UGameInstance* UGA_Jump::GetGameInstance()
+{
+	UWorld* World = GetWorld();
+	if (!World && GetCurrentActorInfo())
+	{
+		World = GetCurrentActorInfo()->AvatarActor.IsValid() ? GetCurrentActorInfo()->AvatarActor->GetWorld() : nullptr;
+	}
+
+	if (World)
+	{
+		return World->GetGameInstance();
+	}
+
+	return nullptr;
 }
 

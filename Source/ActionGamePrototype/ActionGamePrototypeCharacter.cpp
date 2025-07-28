@@ -81,8 +81,7 @@ void AActionGamePrototypeCharacter::BeginPlay()
 	}
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-
-	AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(UGA_Jump::StaticClass(), 1, 0));
+	AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(JumpGameplayAbility, 1, 0));
 	
 	// Listeners bindings
 	OnHealthAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnHealthChanged);
@@ -148,7 +147,7 @@ void AActionGamePrototypeCharacter::Jump(const FInputActionValue& Value)
 {
 	if(AbilitySystemComponent != nullptr)
 	{
-		AbilitySystemComponent->TryActivateAbilityByClass(UGA_Jump::StaticClass());
+		AbilitySystemComponent->TryActivateAbilityByClass(JumpGameplayAbility);
 	}
 }
 

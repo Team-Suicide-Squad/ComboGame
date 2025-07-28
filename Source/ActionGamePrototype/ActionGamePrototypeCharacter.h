@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UAbilitySystemComponent;
 class UCharacterAttributeSet;
+class UGA_Jump;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -32,11 +33,14 @@ class AActionGamePrototypeCharacter : public ACharacter
 	UCameraComponent* FollowCamera;
 
 	// GAS variables --------------------------
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
 	UAbilitySystemComponent* AbilitySystemComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
 	UCharacterAttributeSet* CharacterAttributeSet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGA_Jump> JumpGameplayAbility;
 	// ----------------------------------------
 	
 	/** MappingContext */

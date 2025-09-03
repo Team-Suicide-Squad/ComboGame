@@ -49,6 +49,19 @@ public:
 	float DefaultMana = 100.0f;
 #pragma endregion
 
+#pragma region Movement
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FGameplayAttributeData Speed;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Speed)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FGameplayAttributeData MaxSpeed;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxSpeed)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float DefaultSpeed = 500.0f;
+#pragma endregion
+
 	void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
 	void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 

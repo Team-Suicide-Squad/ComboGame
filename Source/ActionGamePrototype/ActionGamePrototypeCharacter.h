@@ -65,6 +65,7 @@ class AActionGamePrototypeCharacter : public ACharacter
 
 	FDelegateHandle OnHealthAttributeChangeDelegateHandle;
 	FDelegateHandle OnManaAttributeChangeDelegateHandle;
+	FDelegateHandle OnSpeedAttributeChangeDelegateHandle;
 
 public:
 	AActionGamePrototypeCharacter();
@@ -87,6 +88,7 @@ private:
 	/* Attributes update */
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 	void OnManaChanged(const FOnAttributeChangeData& Data);
+	void OnSpeedChanged(const FOnAttributeChangeData& Data);
 
 protected:
 	// APawn interface

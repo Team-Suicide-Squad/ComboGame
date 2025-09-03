@@ -86,6 +86,7 @@ void AActionGamePrototypeCharacter::BeginPlay()
 	// Listeners bindings
 	OnHealthAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnHealthChanged);
 	OnManaAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetManaAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnManaChanged);
+	OnSpeedAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetSpeedAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnSpeedChanged);
 }
 
 bool AActionGamePrototypeCharacter::CanJumpInternal_Implementation() const
@@ -177,4 +178,9 @@ void AActionGamePrototypeCharacter::OnHealthChanged(const FOnAttributeChangeData
 void AActionGamePrototypeCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
 {
 	const float NewMana = Data.NewValue;
+}
+
+void AActionGamePrototypeCharacter::OnSpeedChanged(const FOnAttributeChangeData& Data)
+{
+	GetCharacterMovement()->MaxWalkSpeed = Data.NewValue;
 }

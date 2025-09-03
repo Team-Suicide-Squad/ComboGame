@@ -24,6 +24,16 @@ void UCharacterAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& At
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultMana);
 	}
+
+	if (Attribute == GetSpeedAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultSpeed);
+	}
+
+	if (Attribute == GetMaxSpeedAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultSpeed);
+	}
 }
 
 void UCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -46,6 +56,16 @@ void UCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attrib
 	if (Attribute == GetMaxManaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, MaxMana.GetBaseValue());
+	}
+
+	if (Attribute == GetSpeedAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, MaxSpeed.GetBaseValue());
+	}
+
+	if (Attribute == GetMaxSpeedAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, MaxSpeed.GetBaseValue());
 	}
 }
 

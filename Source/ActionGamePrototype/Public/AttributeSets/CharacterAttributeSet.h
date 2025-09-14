@@ -31,9 +31,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxHealth)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
-	float DefaultHealth = 100.0f;
 #pragma endregion
 
 #pragma region Mana
@@ -44,9 +41,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Mana")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxMana)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Mana")
-	float DefaultMana = 100.0f;
 #pragma endregion
 
 #pragma region Movement
@@ -57,9 +51,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FGameplayAttributeData MaxSpeed;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxSpeed)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	float DefaultSpeed = 500.0f;
 #pragma endregion
 
 	void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
@@ -70,4 +61,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetManaPercentage();
+
+private:
+	static constexpr float MAXVALUE = 9999;
 };

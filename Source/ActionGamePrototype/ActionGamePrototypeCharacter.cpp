@@ -59,6 +59,11 @@ AActionGamePrototypeCharacter::AActionGamePrototypeCharacter()
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 
+	// Listeners bindings. I put those here because the Init GE is executed before the BeginPlay
+	OnHealthAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnHealthChanged);
+	OnManaAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetManaAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnManaChanged);
+	OnSpeedAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetSpeedAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnSpeedChanged);
+
 	// Create the Character attribute set
 	CharacterAttributeSet = CreateDefaultSubobject<UCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 
@@ -82,11 +87,6 @@ void AActionGamePrototypeCharacter::BeginPlay()
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(JumpGameplayAbility, 1, 0));
-	
-	// Listeners bindings
-	OnHealthAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnHealthChanged);
-	OnManaAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetManaAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnManaChanged);
-	OnSpeedAttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCharacterAttributeSet::GetSpeedAttribute()).AddUObject(this, &AActionGamePrototypeCharacter::OnSpeedChanged);
 }
 
 bool AActionGamePrototypeCharacter::CanJumpInternal_Implementation() const

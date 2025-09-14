@@ -7,32 +7,32 @@ void UCharacterAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& At
 {
 	if (Attribute == GetHealthAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultHealth);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetMaxHealthAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultHealth);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetManaAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultMana);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetMaxManaAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultMana);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetSpeedAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultSpeed);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetMaxSpeedAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, DefaultSpeed);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 }
 
@@ -40,32 +40,32 @@ void UCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attrib
 {
 	if(Attribute == GetHealthAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MaxHealth.GetBaseValue());
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetMaxHealthAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MaxHealth.GetBaseValue());
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if(Attribute == GetManaAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MaxMana.GetBaseValue());
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetMaxManaAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MaxMana.GetBaseValue());
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetSpeedAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MaxSpeed.GetBaseValue());
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 
 	if (Attribute == GetMaxSpeedAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MaxSpeed.GetBaseValue());
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
 	}
 }
 

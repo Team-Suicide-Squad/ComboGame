@@ -1,18 +1,21 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ActionGamePrototypeCharacter.h"
+
 #include "AbilitySystemComponent.h"
-#include "Engine/LocalPlayer.h"
-#include "Camera/CameraComponent.h"
 #include "AttributeSets/CharacterAttributeSet.h"
+#include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "GameFramework/Controller.h"
+#include "Engine/LocalPlayer.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "InputActionValue.h"
 #include "GA_Jump.h"
+#include "GA_Dash.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "InputActionValue.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -87,6 +90,39 @@ void AActionGamePrototypeCharacter::BeginPlay()
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(JumpGameplayAbility, 1, 0));
+	AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(DashGameplayAbility, 1, 0));
+}
+
+void AActionGamePrototypeCharacter::Jump()
+{
+	Super::Jump();
+}
+
+void AActionGamePrototypeCharacter::Dash(float DashDistance)
+{
+	FVector DashDirection = GetLastMovementInputVector();
+	if (DashDirection.IsNearlyZero())
+	{
+		DashDirection = GetActorForwardVector();
+	}
+
+	GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Custom;
+	LaunchCharacter(DashDirection.GetSafeNormal() * DashDistance, true, true);
+}
+
+void AActionGamePrototypeCharacter::StopDash()
+{
+	GetCharacterMovement()->StopActiveMovement();
+}
+
+bool AActionGamePrototypeCharacter::CanJump() const
+{
+	return Super::CanJump();
+}
+
+void AActionGamePrototypeCharacter::StopJumping()
+{
+	Super::StopJumping();
 }
 
 bool AActionGamePrototypeCharacter::CanJumpInternal_Implementation() const
@@ -103,17 +139,21 @@ void AActionGamePrototypeCharacter::SetupPlayerInputComponent(UInputComponent* P
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AActionGamePrototypeCharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AActionGamePrototypeCharacter::JumpInput);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AActionGamePrototypeCharacter::StopJumping);
+
+		// Dashing
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AActionGamePrototypeCharacter::DashInput);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &AActionGamePrototypeCharacter::StopDash);
 
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AActionGamePrototypeCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AActionGamePrototypeCharacter::MoveInput);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AActionGamePrototypeCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AActionGamePrototypeCharacter::LookInput);
 
 		// Attacking
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AActionGamePrototypeCharacter::Attack);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AActionGamePrototypeCharacter::AttackInput);
 	}
 	else
 	{
@@ -121,7 +161,7 @@ void AActionGamePrototypeCharacter::SetupPlayerInputComponent(UInputComponent* P
 	}
 }
 
-void AActionGamePrototypeCharacter::Move(const FInputActionValue& Value)
+void AActionGamePrototypeCharacter::MoveInput(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -144,7 +184,7 @@ void AActionGamePrototypeCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void AActionGamePrototypeCharacter::Jump(const FInputActionValue& Value)
+void AActionGamePrototypeCharacter::JumpInput(const FInputActionValue& Value)
 {
 	if(AbilitySystemComponent != nullptr)
 	{
@@ -152,7 +192,15 @@ void AActionGamePrototypeCharacter::Jump(const FInputActionValue& Value)
 	}
 }
 
-void AActionGamePrototypeCharacter::Look(const FInputActionValue& Value)
+void AActionGamePrototypeCharacter::DashInput(const FInputActionValue& Value)
+{
+	if (AbilitySystemComponent != nullptr)
+	{
+		AbilitySystemComponent->TryActivateAbilityByClass(DashGameplayAbility);
+	}
+}
+
+void AActionGamePrototypeCharacter::LookInput(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -165,7 +213,7 @@ void AActionGamePrototypeCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void AActionGamePrototypeCharacter::Attack(const FInputActionValue& Value)
+void AActionGamePrototypeCharacter::AttackInput(const FInputActionValue& Value)
 {
 	// To implement
 }

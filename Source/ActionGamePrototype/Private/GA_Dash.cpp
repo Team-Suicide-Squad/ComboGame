@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GA_Jump.h"
+#include "GA_Dash.h"
 #include "ActionGamePrototype/ActionGamePrototypeCharacter.h"
 
-UGA_Jump::UGA_Jump(const FObjectInitializer& ObjectInitializer)
+UGA_Dash::UGA_Dash(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
-void UGA_Jump::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void UGA_Dash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	if (HasAuthorityOrPredictionKey(ActorInfo, &ActivationInfo))
 	{
@@ -21,16 +21,16 @@ void UGA_Jump::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 		}
 
 		AActionGamePrototypeCharacter* Character = CastChecked<AActionGamePrototypeCharacter>(ActorInfo->AvatarActor.Get());
-		Character->Jump();
+		Character->Dash(DashDistance);
 
-		if(UGameInstance* GameInstance = GetGameInstance())
+		if (UGameInstance* GameInstance = GetGameInstance())
 		{
-			GameInstance->GetTimerManager().SetTimer(JumpTimer, this, &UGA_Jump::ResetJump, TimeBetweenJumps, false);	
+			GameInstance->GetTimerManager().SetTimer(DashTimer, this, &UGA_Dash::ResetDash, TimeBetweenDashes, false);
 		}
 	}
 }
 
-void UGA_Jump::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
+void UGA_Dash::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	if (ActorInfo != NULL && ActorInfo->AvatarActor != NULL)
 	{
@@ -38,15 +38,14 @@ void UGA_Jump::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGam
 	}
 }
 
-bool UGA_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, OUT FGameplayTagContainer* OptionalRelevantTags) const
+bool UGA_Dash::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
 	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
 	{
 		return false;
 	}
 
-	const AActionGamePrototypeCharacter* Character = CastChecked<AActionGamePrototypeCharacter>(ActorInfo->AvatarActor.Get(), ECastCheckedType::NullAllowed);
-	return (Character && Character->CanJump());
+	return true;
 }
 
 /**
@@ -55,26 +54,26 @@ bool UGA_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const
  *	Montage that *it* played was still playing, and if so, to cancel it. If this is something we need to support, we may need some
  *	light weight data structure to represent 'non intanced abilities in action' with a way to cancel/end them.
  */
-void UGA_Jump::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
+void UGA_Dash::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
 {
 	if (ScopeLockCount > 0)
 	{
-		WaitingToExecute.Add(FPostLockDelegate::CreateUObject(this, &UGA_Jump::CancelAbility, Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility));
+		WaitingToExecute.Add(FPostLockDelegate::CreateUObject(this, &UGA_Dash::CancelAbility, Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility));
 		return;
 	}
 
 	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
 
 	AActionGamePrototypeCharacter* Character = CastChecked<AActionGamePrototypeCharacter>(ActorInfo->AvatarActor.Get());
-	Character->StopJumping();
+	Character->StopDash();
 }
 
-void UGA_Jump::ResetJump()
+void UGA_Dash::ResetDash()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
-UGameInstance* UGA_Jump::GetGameInstance()
+UGameInstance* UGA_Dash::GetGameInstance()
 {
 	UWorld* World = GetWorld();
 	if (!World && GetCurrentActorInfo())
@@ -89,4 +88,3 @@ UGameInstance* UGA_Jump::GetGameInstance()
 
 	return nullptr;
 }
-

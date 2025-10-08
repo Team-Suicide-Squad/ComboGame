@@ -13,6 +13,7 @@ class UCameraComponent;
 class UAbilitySystemComponent;
 class UCharacterAttributeSet;
 class UGA_Jump;
+class UGA_Dash;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -41,6 +42,9 @@ class AActionGamePrototypeCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGA_Jump> JumpGameplayAbility;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGA_Dash> DashGameplayAbility;
 	// ----------------------------------------
 	
 	/** MappingContext */
@@ -59,6 +63,10 @@ class AActionGamePrototypeCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Dash Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* DashAction;
+
 	/** Attack Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
@@ -70,32 +78,49 @@ class AActionGamePrototypeCharacter : public ACharacter
 public:
 	AActionGamePrototypeCharacter();
 
+	// Dash logic
+	void Dash(float DashDistance);
+	void StopDash();
+
+	// Jump logic
+	void Jump() override;
+
+	// I don't override the function because I don't have engine downloaded
+	bool CanJump() const;
+
+	void StopJumping() override;
+
 protected:
 
 	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
-
-	/** Called for jump input */
-	void Jump(const FInputActionValue& Value);
+	void MoveInput(const FInputActionValue& Value);
 
 	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
+	void LookInput(const FInputActionValue& Value);
+
+	/** Called for jump input */
+	void JumpInput(const FInputActionValue& Value);
+
+	/** Called for dash input */
+	void DashInput(const FInputActionValue& Value);
 
 	/** Called for attack input */
-	void Attack(const FInputActionValue& Value);
+	void AttackInput(const FInputActionValue& Value);
 			
 private:
+
 	/* Attributes update */
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 	void OnManaChanged(const FOnAttributeChangeData& Data);
 	void OnSpeedChanged(const FOnAttributeChangeData& Data);
 
 protected:
+
 	// APawn interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// To add mapping context
-	virtual void BeginPlay();
+	void BeginPlay() override;
 
 	bool CanJumpInternal_Implementation() const override;
 

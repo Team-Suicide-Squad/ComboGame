@@ -63,5 +63,6 @@ public:
 	float GetManaPercentage();
 
 private:
-	static constexpr float MAXVALUE = 9999;
+	static constexpr float MAXVALUE = 100;
+	static constexpr float MAXSPEEDVALUE = 9999;
 };

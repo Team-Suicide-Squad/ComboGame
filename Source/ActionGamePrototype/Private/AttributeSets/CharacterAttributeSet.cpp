@@ -27,12 +27,12 @@ void UCharacterAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& At
 
 	if (Attribute == GetSpeedAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXSPEEDVALUE);
 	}
 
 	if (Attribute == GetMaxSpeedAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXSPEEDVALUE);
 	}
 }
 
@@ -60,12 +60,12 @@ void UCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attrib
 
 	if (Attribute == GetSpeedAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXSPEEDVALUE);
 	}
 
 	if (Attribute == GetMaxSpeedAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.0f, MAXVALUE);
+		NewValue = FMath::Clamp(NewValue, 0.0f, MAXSPEEDVALUE);
 	}
 }
 

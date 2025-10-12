@@ -4,6 +4,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AttributeSets/CharacterAttributeSet.h"
+#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/LocalPlayer.h"
@@ -218,9 +219,18 @@ void AActionGamePrototypeCharacter::AttackInput(const FInputActionValue& Value)
 	// To implement
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// Character state update
+
 void AActionGamePrototypeCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	const float NewHealth = Data.NewValue;
+
+	if(NewHealth <= 0.0f)
+	{
+		Die();
+	}
 }
 
 void AActionGamePrototypeCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
@@ -231,4 +241,14 @@ void AActionGamePrototypeCharacter::OnManaChanged(const FOnAttributeChangeData& 
 void AActionGamePrototypeCharacter::OnSpeedChanged(const FOnAttributeChangeData& Data)
 {
 	GetCharacterMovement()->MaxWalkSpeed = Data.NewValue;
+}
+
+void AActionGamePrototypeCharacter::Die()
+{
+	GetCharacterMovement()->Deactivate();
+	if (DeathWidgetInstance == nullptr) 
+	{
+		DeathWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), DeathScreenWidget);
+		DeathWidgetInstance->AddToViewport();
+	}
 }

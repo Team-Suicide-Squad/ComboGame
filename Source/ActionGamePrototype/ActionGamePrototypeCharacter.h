@@ -16,6 +16,7 @@ class UGA_Jump;
 class UGA_Dash;
 class UInputMappingContext;
 class UInputAction;
+class UUserWidget;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -47,6 +48,11 @@ class AActionGamePrototypeCharacter : public ACharacter
 	TSubclassOf<UGA_Dash> DashGameplayAbility;
 	// ----------------------------------------
 	
+	// GAS variables --------------------------
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> DeathScreenWidget;
+	// ----------------------------------------
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
@@ -85,12 +91,27 @@ public:
 	// Jump logic
 	void Jump() override;
 
-	// I don't override the function because I don't have engine downloaded
+	// I don't override the function because I don't have the engine code downloaded
 	bool CanJump() const;
 
 	void StopJumping() override;
 
+	/* Attributes update */
+	void OnHealthChanged(const FOnAttributeChangeData& Data);
+	void OnManaChanged(const FOnAttributeChangeData& Data);
+	void OnSpeedChanged(const FOnAttributeChangeData& Data);
+
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
 protected:
+	// To add mapping context
+	void BeginPlay() override;
+
+	// APawn interface
+	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/** Called for movement input */
 	void MoveInput(const FInputActionValue& Value);
@@ -106,28 +127,12 @@ protected:
 
 	/** Called for attack input */
 	void AttackInput(const FInputActionValue& Value);
-			
-private:
-
-	/* Attributes update */
-	void OnHealthChanged(const FOnAttributeChangeData& Data);
-	void OnManaChanged(const FOnAttributeChangeData& Data);
-	void OnSpeedChanged(const FOnAttributeChangeData& Data);
-
-protected:
-
-	// APawn interface
-	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	// To add mapping context
-	void BeginPlay() override;
 
 	bool CanJumpInternal_Implementation() const override;
+			
+private:
+	UUserWidget* DeathWidgetInstance;
 
-public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	void Die();
 };
 

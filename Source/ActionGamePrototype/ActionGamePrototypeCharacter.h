@@ -16,10 +16,10 @@ class UGA_Jump;
 class UGA_Dash;
 class UInputMappingContext;
 class UInputAction;
-class UUserWidget;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS(config=Game)
 class AActionGamePrototypeCharacter : public ACharacter
@@ -46,11 +46,6 @@ class AActionGamePrototypeCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GAS, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGA_Dash> DashGameplayAbility;
-	// ----------------------------------------
-	
-	// GAS variables --------------------------
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UUserWidget> DeathScreenWidget;
 	// ----------------------------------------
 
 	/** MappingContext */
@@ -101,6 +96,9 @@ public:
 	void OnManaChanged(const FOnAttributeChangeData& Data);
 	void OnSpeedChanged(const FOnAttributeChangeData& Data);
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnDeath OnDeath;
+
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
@@ -131,8 +129,6 @@ protected:
 	bool CanJumpInternal_Implementation() const override;
 			
 private:
-	UUserWidget* DeathWidgetInstance;
-
 	void Die();
 };
 

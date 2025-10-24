@@ -4,7 +4,6 @@
 
 #include "AbilitySystemComponent.h"
 #include "AttributeSets/CharacterAttributeSet.h"
-#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/LocalPlayer.h"
@@ -246,9 +245,5 @@ void AActionGamePrototypeCharacter::OnSpeedChanged(const FOnAttributeChangeData&
 void AActionGamePrototypeCharacter::Die()
 {
 	GetCharacterMovement()->Deactivate();
-	if (DeathWidgetInstance == nullptr) 
-	{
-		DeathWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), DeathScreenWidget);
-		DeathWidgetInstance->AddToViewport();
-	}
+	OnDeath.Broadcast();
 }

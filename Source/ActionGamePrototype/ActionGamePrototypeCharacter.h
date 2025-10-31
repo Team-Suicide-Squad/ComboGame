@@ -96,6 +96,10 @@ public:
 	void OnManaChanged(const FOnAttributeChangeData& Data);
 	void OnSpeedChanged(const FOnAttributeChangeData& Data);
 
+	// Move this to the GE
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	float DamageForceReaction = 400.0f;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnDeath OnDeath;
 

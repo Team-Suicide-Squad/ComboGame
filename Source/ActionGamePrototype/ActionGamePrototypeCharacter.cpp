@@ -230,6 +230,18 @@ void AActionGamePrototypeCharacter::OnHealthChanged(const FOnAttributeChangeData
 	{
 		Die();
 	}
+	else if(NewHealth < Data.OldValue)
+	{
+		// TODO: Change this to be relative to some damages only and use the normal with the overlap
+		FVector MovementDirection = GetLastMovementInputVector();
+		if (MovementDirection.IsNearlyZero())
+		{
+			MovementDirection = GetActorForwardVector();
+		}
+
+		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Custom;
+		LaunchCharacter(MovementDirection.GetSafeNormal() * (-DamageForceReaction), true, true);
+	}
 }
 
 void AActionGamePrototypeCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
